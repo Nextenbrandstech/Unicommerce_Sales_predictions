@@ -8,11 +8,27 @@ le_zone = joblib.load("zone_encoder.pkl")
 le_platform = joblib.load("platform_encoder.pkl")
 
 
-def predict_sales(item_sku_code, order_date, model, le_sku, le_zone, le_platform, zone, platform):
+def predict_sales(item_sku_code, order_date, model, le_sku, le_zone, le_platform, zone, platform, selling_price):
     
+    """
+    A very important note: If you are adding any feature in the training, 
+    place them in the same location in this function as well.
+    For Example:
+    As in the training the features are in the order: 
+    ['Item SKU Code', 'Order Date', 'Shipping Address State', 'Channel Name', 'Selling Price']
+    The same order has been followed here as you can see, first we have added
+    "Order Date"
+    "Item SKU Code"
+    "Then splitting the Order Date into year, month, date and day"
+    "Zone"
+    "Platform"
+    "Selling Price"
+    
+    """
+
     df = pd.DataFrame({
         "Order Date": [pd.to_datetime(order_date)],
-        "Item SKU Code": [item_sku_code]
+        "Item SKU Code": [item_sku_code],
     })
 
     # Feature engineering
@@ -25,6 +41,7 @@ def predict_sales(item_sku_code, order_date, model, le_sku, le_zone, le_platform
 
     df["Zone"] = zone
     df["Platform"] = platform
+    df["Selling Price"] = selling_price
 
     # Encode
     df["Item SKU Code"] = le_sku.transform(df["Item SKU Code"])

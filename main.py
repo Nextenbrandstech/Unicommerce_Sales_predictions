@@ -23,7 +23,10 @@ st.write("This application predicts the sales of a particular SKU (SKU from the 
 order_date = st.date_input("Order Date")
 end_date = st.date_input("End Date")
 item_sku_code = st.text_input("Item SKU Code")
+selling_price = st.number_input("Selling Price (used in that period).")
 days_for_prediction = (end_date - order_date).days
+
+if days_for_prediction == 0: days_for_prediction = 1
 
 predictions = 0
 
@@ -36,9 +39,7 @@ if st.button("Predict Quantity"):
             for k in range(days_for_prediction):
 
                 order_date = order_date + timedelta(days=k)
-                predictions += predict_sales(item_sku_code, order_date, model, le_sku, le_zone, le_platform, i, j)
+                predictions += predict_sales(item_sku_code, order_date, model, le_sku, le_zone, le_platform, i, j, selling_price)
             
-            # print(f"Prediction for {item_sku_code} from {i} zone from {j} platform is {predictions}")
             st.success(f"Prediction for {item_sku_code} from {i} zone from {j} platform is {round(predictions)}")
     
-            # st.success(f"Predicted Quantity: {round(prediction)}")

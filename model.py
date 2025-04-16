@@ -13,9 +13,10 @@ zone_classification_data = pd.read_excel(r"C:\Users\Satyam\Documents\Visual Stud
 
 data.rename(columns={'Order Date as dd/mm/yyyy hh:MM:ss': 'Order Date'}, inplace=True)
 data['Order Date'] = data['Order Date'].dt.date
+data['Selling Price'] = data['Selling Price'].astype(float)
 
-data = data[['Item SKU Code', 'Order Date', 'Shipping Address State', 'Channel Name']].dropna()
-data = data.groupby(['Item SKU Code', 'Order Date', 'Shipping Address State', 'Channel Name']).size().reset_index(name='Quantity')
+data = data[['Item SKU Code', 'Order Date', 'Shipping Address State', 'Channel Name', 'Selling Price']].dropna()
+data = data.groupby(['Item SKU Code', 'Order Date', 'Shipping Address State', 'Channel Name', 'Selling Price']).size().reset_index(name='Quantity')
 
 # Performing an inner join to get the zones based on the states
 merged_data = data.merge(
@@ -44,7 +45,7 @@ merged_data['Zone'] = le_zone.fit_transform(merged_data['Zone'])
 le_platform = LabelEncoder()
 merged_data['Platform'] = le_platform.fit_transform(merged_data['Platform'])
 
-x = merged_data[['Item SKU Code', 'order_year', 'order_month', 'order_day', 'order_dayofweek', 'Zone', 'Platform']]
+x = merged_data[['Item SKU Code', 'order_year', 'order_month', 'order_day', 'order_dayofweek', 'Zone', 'Platform', 'Selling Price']]
 y = merged_data['Quantity']
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state=23)
